@@ -191,14 +191,27 @@ void LabirinthSolver::Dfs(Cell& current_cell, Cell& parent_cell) {
     } else {
         if (!center_cell.is_visited && Go()) {
             Dfs(current_cell_, current_cell);
-            Turn("right");
-            if (!left_cell.is_visited && Go()) {
-                Dfs(current_cell_, current_cell);
-                if (!right_cell.is_visited && Go()) {
+            if (!left_cell.is_visited) {
+                Turn("right");
+                if (Go()) {
                     Dfs(current_cell_, current_cell);
-                    Turn("left");
+                    if (!right_cell.is_visited && Go()) {
+                        Dfs(current_cell_, current_cell);
+                        Turn("left");
+                    } else {
+                        Turn("right");
+                    }
                 } else {
-                    Turn("right");
+                    if (!right_cell.is_visited) {
+                        Turn("right");
+                        Turn("right");
+                        if (Go()) {
+                            Dfs(current_cell_, current_cell);
+                            Turn("left");
+                        } else {
+                            Turn("right");
+                        }
+                    }
                 }
             }
         } else {
@@ -206,19 +219,23 @@ void LabirinthSolver::Dfs(Cell& current_cell, Cell& parent_cell) {
                 Turn("left");
                 if (Go()) {
                     Dfs(current_cell_, current_cell);
+                    if (!right_cell.is_visited && Go()) {
+                        Dfs(current_cell_, current_cell);
+                        Turn("left");
+                    } else {
+                        Turn("right");
+                    }
                 }
+            } else {
                 if (!right_cell.is_visited) {
                     Turn("right");
-                } else {
-                    Turn("left");
-                    Go();
-                    return;
                 }
-            }
-            Turn("right");
-            if (!right_cell.is_visited && Go()) {
-                Dfs(current_cell_, current_cell);
-                Turn("right");
+                if (Go()) {
+                    Dfs(current_cell_, current_cell);
+                    Turn("left");
+                } else {
+                    Turn("right");
+                }
             }
         }
     }
